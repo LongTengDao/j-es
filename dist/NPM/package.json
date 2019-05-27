@@ -1,0 +1,11 @@
+{
+	"name": "@ltd/j-es",
+	"version": "0.1.0",
+	"license": "LGPL-3.0",
+	"author": "龙腾道 <LongTengDao@LongTengDao.com> (www.LongTengDao.com)",
+	"bugs": "https://GitHub.com/LongTengDao/j-es/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://GitHub.com/LongTengDao/j-es.git"
+	}
+}
