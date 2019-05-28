@@ -1,6 +1,7 @@
 {
 	"name": "@ltd/j-es",
-	"version": "0.1.0",
+	"description": "ECMAScript syntax util.／ECMAScript 语法相关共享实用程序。",
+	"version": "0.2.0",
 	"license": "LGPL-3.0",
 	"author": "龙腾道 <LongTengDao@LongTengDao.com> (www.LongTengDao.com)",
 	"bugs": "https://GitHub.com/LongTengDao/j-es/issues",

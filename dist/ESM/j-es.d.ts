@@ -1,4 +1,4 @@
-export const version :'0.1.0';
+export const version :'0.2.0';
 export function toStringLiteral (string :string) :string;
 export function isIdentifier (id :string, notESM? :boolean) :boolean;
 export function isBareKey (key :string, notES3? :boolean) :boolean;
