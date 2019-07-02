@@ -1,6 +1,11 @@
 {
 	"compilerOptions": {
 		"target": "ES3",
+		"baseUrl": "..",
+		"paths": {
+			"@ltd/*": [ "../../LongTengDao/*/src/export" ],
+			"lib:*": [ "lib/*/dist" ]
+		},
 		"strict": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": true

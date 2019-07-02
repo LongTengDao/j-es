@@ -1,8 +1,68 @@
-export = exports;
-declare const exports :{
-	version :'0.2.0'
-	toStringLiteral (string :string) :string
-	isIdentifier (id :string, notESM? :boolean) :boolean
-	isBareKey (key :string, notES3? :boolean) :boolean
-	default :typeof exports
+import { IDENTIFIER_PART, IDENTIFIER_START, RESERVED_WORD_ES3, RESERVED_WORD_ESM } from './export';
+export = EXPORTS;
+declare const EXPORTS :{
+	
+	version :'0.6.1'
+	
+	isReservedWord (name :string, ES? :number) :boolean;
+	
+	isIdentifierName (name :string, ES? :number) :boolean;
+	isIdentifier (id :string, ES? :number) :boolean;
+	isPropertyIndex (key :string) :boolean;
+	isPropertyName (key :string, ES? :number) :boolean;
+	PropertyName (key :string, ES? :number) :string;
+	PropertyAccessor (key :string, ES? :number) :string;
+	PropertyAccessors (keys :string[], ES? :number) :string;
+	
+	StringLiteral (string :string) :string
+	NumericLiteral (number :number) :string
+	BigIntLiteral (bigInt :bigint) :string
+	RegularExpressionLiteral (regExp :RegExp) :string
+	
+	ObjectLiteral<Value extends any> (
+		object :{ [key :string] :Value },
+		ValueLiteral :(value :Value) => string,
+		options? :{
+			ES? :number,
+			open_close? :string,
+			open_first? :string,
+			colon_value? :string,
+			comma_next? :string,
+			last_close? :string,
+			defineProperty? :string,
+		}
+	) :string
+	ArrayLiteral<Item extends any> (
+		array :Item[],
+		ItemLiteral :(item :Item) => string,
+		options? :{
+			open_close? :string,
+			open_first? :string,
+			comma_next? :string,
+			last_close? :string,
+		}
+	) :string
+	
+	exportify<Value extends any> (
+		object :{ [key :string] :Value },
+		IdentifierValueLiteral :(value :Value) => string,
+		PropertyValueLiteral :(value :Value) => string,
+		options? :{
+			ES? :number,
+			let? :string,
+			identifier_equal? :string,
+			equal_value? :string,
+			open_close? :string,
+			open_first? :string,
+			colon_value? :string,
+			comma_next? :string,
+			last_close? :string,
+			semicolon_next? :string,
+			default_open? :string,
+			defineProperty? :string,
+		}
+	) :string
+	
+	default :typeof EXPORTS
+	
 };

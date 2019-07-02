@@ -1,0 +1,36 @@
+break
+case
+catch
+class      ES6
+const      ES6
+continue
+debugger
+default
+delete
+do
+else
+enum       ...
+export     ES6
+extends    ES6
+false
+finally
+for
+function
+if
+import     ES6
+in
+instanceof
+new
+null
+return
+switch
+super      ES6
+this
+throw
+true
+try
+typeof
+var
+void
+while
+with

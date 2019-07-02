@@ -1,4 +1,13 @@
-﻿'use strict';
+﻿/*!
+ * 模块名称：ES
+ * 模块功能：ECMAScript 语法相关共享实用程序。从属于“简计划”。
+   　　　　　ECMAScript syntax util. Belong to "Plan J".
+ * 模块版本：0.6.1
+ * 许可条款：LGPL-3.0
+ * 所属作者：龙腾道 <LongTengDao@LongTengDao.com> (www.LongTengDao.com)
+ * 问题反馈：https://GitHub.com/LongTengDao/j-es/issues
+ * 项目主页：https://GitHub.com/LongTengDao/j-es/
+ */
 
 var version = '0.6.1';
 
@@ -270,6 +279,9 @@ function (ES) { return ES['default'] = ES; }({
     'default': {}
 }));
 
-module.exports = _export;
+export default _export;
+export { ArrayLiteral, BigIntLiteral, NumericLiteral, ObjectLiteral, PropertyAccessor, PropertyAccessors, PropertyName, RegularExpressionLiteral, StringLiteral, exportify, isIdentifier, isIdentifierName, isPropertyIndex, isPropertyName, isReservedWord, version };
 
-//# sourceMappingURL=index.js.map
+/*¡ ES */
+
+//# sourceMappingURL=index.mjs.map
