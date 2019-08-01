@@ -5,7 +5,8 @@ import {
 	
 	isIdentifierName,
 	isIdentifier,
-	isPropertyIndex,
+	isArrayIndex,
+	isIntegerIndex,
 	isPropertyName,
 	
 	PropertyName,
@@ -33,7 +34,8 @@ export {
 	
 	isIdentifierName,
 	isIdentifier,
-	isPropertyIndex,
+	isArrayIndex,
+	isIntegerIndex,
 	isPropertyName,
 	PropertyName,
 	PropertyAccessor,
@@ -61,7 +63,8 @@ export default (
 		
 		isIdentifierName: isIdentifierName,
 		isIdentifier: isIdentifier,
-		isPropertyIndex: isPropertyIndex,
+		isArrayIndex: isArrayIndex,
+		isIntegerIndex: isIntegerIndex,
 		isPropertyName: isPropertyName,
 		PropertyName: PropertyName,
 		PropertyAccessor: PropertyAccessor,

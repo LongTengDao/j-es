@@ -1,4 +1,3 @@
-import { IDENTIFIER_PART, IDENTIFIER_START, RESERVED_WORD_ES3, RESERVED_WORD_ESM } from './export';
 export = EXPORTS;
 declare const EXPORTS :{
 	
@@ -8,7 +7,8 @@ declare const EXPORTS :{
 	
 	isIdentifierName (name :string, ES? :number) :boolean;
 	isIdentifier (id :string, ES? :number) :boolean;
-	isPropertyIndex (key :string) :boolean;
+	isArrayIndex (key :string) :boolean;
+	isIntegerIndex (key :string) :boolean;
 	isPropertyName (key :string, ES? :number) :boolean;
 	PropertyName (key :string, ES? :number) :string;
 	PropertyAccessor (key :string, ES? :number) :string;

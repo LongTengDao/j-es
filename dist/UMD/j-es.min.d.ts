@@ -1,15 +1,15 @@
 export as namespace ES;
-import { IDENTIFIER_PART, IDENTIFIER_START, RESERVED_WORD_ES3, RESERVED_WORD_ESM } from './export';
 export = EXPORTS;
 declare const EXPORTS :{
 	
-	version :'0.6.1'
+	version :'0.7.0'
 	
 	isReservedWord (name :string, ES? :number) :boolean;
 	
 	isIdentifierName (name :string, ES? :number) :boolean;
 	isIdentifier (id :string, ES? :number) :boolean;
-	isPropertyIndex (key :string) :boolean;
+	isArrayIndex (key :string) :boolean;
+	isIntegerIndex (key :string) :boolean;
 	isPropertyName (key :string, ES? :number) :boolean;
 	PropertyName (key :string, ES? :number) :string;
 	PropertyAccessor (key :string, ES? :number) :string;

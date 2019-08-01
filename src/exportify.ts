@@ -22,8 +22,8 @@ export default function exportify<Value extends any> (
 	}
 ) :string {
 	if ( options ) {
-		var gteES5 :boolean = options.ES!>=5;
-		var gteES6 :boolean = gteES5 && options.ES!>=6;
+		var ES :number = options.ES || 0;
+		var gteES6 :boolean = ES>=6;
 		var LET :string = options.let || ( gteES6 ? 'const' : 'var' );
 		var identifier_equal :string = options.identifier_equal || '';
 		var equal_value :string = options.equal_value || '';
@@ -37,7 +37,7 @@ export default function exportify<Value extends any> (
 		var defineProperty :string = options.defineProperty || 'Object.defineProperty';
 	}
 	else {
-		gteES5 = false;
+		ES = 0;
 		gteES6 = false;
 		LET = 'var';
 		identifier_equal = '';
@@ -57,11 +57,11 @@ export default function exportify<Value extends any> (
 	var close :string = '}';
 	for ( var key in object ) {
 		if ( hasOwnProperty.call(object, key) ) {
-			if ( isIdentifier(key, false) ) {
+			if ( isIdentifier(key, ES) ) {
 				named += 'export '+LET+' '+key+identifier_equal+'='+equal_value+IdentifierValueLiteral(object[key])+';'+semicolon_next;
 				if ( gteES6 ) { pairs.push(key); }
 				else if ( key==='__proto__' ) {
-					if ( gteES5 ) {
+					if ( ES>=5 ) {
 						close = '}.__proto__';
 						pairs.push('get __proto__(){return/*#__PURE__*/'+defineProperty+'(this,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:__proto__})}');
 					}
@@ -73,7 +73,7 @@ export default function exportify<Value extends any> (
 				}
 				else { pairs.push(key+':'+colon_value+key); }
 			}
-			else { pairs.push(PropertyName(key, gteES5)+':'+colon_value+PropertyValueLiteral(object[key])); }
+			else { pairs.push(PropertyName(key, ES)+':'+colon_value+PropertyValueLiteral(object[key])); }
 		}
 	}
 	return named+

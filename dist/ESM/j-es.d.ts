@@ -1,10 +1,11 @@
-export const version :'0.6.1';
+export const version :'0.7.0';
 
 export function isReservedWord (name :string, ES? :number) :boolean;
 
 export function isIdentifierName (name :string, ES? :number) :boolean;
 export function isIdentifier (id :string, ES? :number) :boolean;
-export function isPropertyIndex (key :string) :boolean;
+export function isArrayIndex (key :string) :boolean;
+export function isIntegerIndex (key :string) :boolean;
 export function isPropertyName (key :string, ES? :number) :boolean;
 export function PropertyName (key :string, ES? :number) :string;
 export function PropertyAccessor (key :string, ES? :number) :string;
@@ -68,7 +69,8 @@ declare const DEFAULT :{
 	
 	isIdentifierName :typeof isIdentifierName
 	isIdentifier :typeof isIdentifier
-	isPropertyIndex :typeof isPropertyIndex
+	isArrayIndex :typeof isArrayIndex
+	isIntegerIndex :typeof isIntegerIndex
 	isPropertyName :typeof isPropertyName
 	PropertyName :typeof PropertyName
 	PropertyAccessor :typeof PropertyAccessor
