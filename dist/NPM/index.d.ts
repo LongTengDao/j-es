@@ -1,7 +1,7 @@
 export = EXPORTS;
 declare const EXPORTS :{
 	
-	version :'0.7.0'
+	version :'0.8.0'
 	
 	isReservedWord (name :string, ES? :number) :boolean;
 	

@@ -53,34 +53,30 @@ export {
 	
 };
 
-export default (
-	/*#__PURE__*/
-	function (ES :typeof import('./default.d')) { return ES['default'] = ES; }({
-		
-		version: version,
-		
-		isReservedWord: isReservedWord,
-		
-		isIdentifierName: isIdentifierName,
-		isIdentifier: isIdentifier,
-		isArrayIndex: isArrayIndex,
-		isIntegerIndex: isIntegerIndex,
-		isPropertyName: isPropertyName,
-		PropertyName: PropertyName,
-		PropertyAccessor: PropertyAccessor,
-		PropertyAccessors: PropertyAccessors,
-		
-		StringLiteral: StringLiteral,
-		NumericLiteral: NumericLiteral,
-		BigIntLiteral: BigIntLiteral,
-		RegularExpressionLiteral: RegularExpressionLiteral,
-		
-		ObjectLiteral: ObjectLiteral,
-		ArrayLiteral: ArrayLiteral,
-		
-		exportify: exportify,
-		
-		'default': {} as typeof import('./export.d').default
-		
-	})
-);
+import Default from '.default?=';
+export default Default({
+	
+	version: version,
+	
+	isReservedWord: isReservedWord,
+	
+	isIdentifierName: isIdentifierName,
+	isIdentifier: isIdentifier,
+	isArrayIndex: isArrayIndex,
+	isIntegerIndex: isIntegerIndex,
+	isPropertyName: isPropertyName,
+	PropertyName: PropertyName,
+	PropertyAccessor: PropertyAccessor,
+	PropertyAccessors: PropertyAccessors,
+	
+	StringLiteral: StringLiteral,
+	NumericLiteral: NumericLiteral,
+	BigIntLiteral: BigIntLiteral,
+	RegularExpressionLiteral: RegularExpressionLiteral,
+	
+	ObjectLiteral: ObjectLiteral,
+	ArrayLiteral: ArrayLiteral,
+	
+	exportify: exportify
+	
+});

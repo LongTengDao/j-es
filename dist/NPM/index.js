@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-var version = '0.7.0';
+var version = '0.8.0';
 
 var RESERVED_WORD_ES3 = /^(?:break|c(?:a(?:se|tch)|lass|on(?:st|tinue))|d(?:o|e(?:bugger|fault|lete))|e(?:lse|num|x(?:port|tends))|f(?:alse|inally|or|unction)|i(?:f|mport|n(?:stanceof)?)|n(?:ew|ull)|return|s(?:uper|witch)|t(?:h(?:is|row)|r(?:y|ue)|ypeof)|v(?:ar|oid)|w(?:hile|ith))$/;
 var RESERVED_WORD_ESM = /^(?:arguments|break|c(?:a(?:se|tch)|lass|on(?:st|tinue))|d(?:o|e(?:bugger|fault|lete))|e(?:lse|num|val|x(?:port|tends))|f(?:alse|inally|or|unction)|i(?:f|mp(?:lements|ort)|n(?:stanceof|terface)?)|let|n(?:ew|ull)|p(?:ackage|r(?:ivate|otected)|ublic)|return|s(?:tatic|uper|witch)|t(?:h(?:is|row)|r(?:y|ue)|ypeof)|v(?:ar|oid)|w(?:hile|ith)|yield)$/;
@@ -277,37 +277,122 @@ function exportify                    (
 		)+close+';';
 }
 
-var _export = (
-	/*#__PURE__*/
-	function (ES                              ) { return ES['default'] = ES; }({
-		
-		version: version,
-		
-		isReservedWord: isReservedWord,
-		
-		isIdentifierName: isIdentifierName,
-		isIdentifier: isIdentifier,
-		isArrayIndex: isArrayIndex,
-		isIntegerIndex: isIntegerIndex,
-		isPropertyName: isPropertyName,
-		PropertyName: PropertyName,
-		PropertyAccessor: PropertyAccessor,
-		PropertyAccessors: PropertyAccessors,
-		
-		StringLiteral: StringLiteral,
-		NumericLiteral: NumericLiteral,
-		BigIntLiteral: BigIntLiteral,
-		RegularExpressionLiteral: RegularExpressionLiteral,
-		
-		ObjectLiteral: ObjectLiteral,
-		ArrayLiteral: ArrayLiteral,
-		
-		exportify: exportify,
-		
-		'default': {}                                       
-		
-	})
+var undefined$1 = void 0;
+
+var create = Object.create || (
+	/*! j-globals: Object.create (polyfill) */
+	/*#__PURE__*/ function () {
+		var NULL;
+		if ( document.domain ) {
+			try { dom = new ActiveXObject('htmlfile'); }
+			catch (error) { }
+		}
+		if ( dom ) {
+			dom.write('<script><\/script>');
+			dom.close();
+			NULL = dom.parentWindow.Object.prototype;
+		}
+		else {
+			dom = document.createElement('iframe');
+			dom.setAttribute('style', 'display:none !important;_display:none;');//dom.style.display = 'none';
+			var parent = document.body || document.documentElement;
+			parent.appendChild(dom);
+			dom.src = 'javascript:';
+			NULL = dom.contentWindow.Object.prototype;
+			parent.removeChild(dom);
+		}
+		var dom = null;
+		delete NULL.constructor;
+		delete NULL.hasOwnProperty;
+		delete NULL.isPrototypeOf;
+		delete NULL.propertyIsEnumerable;
+		delete NULL.toLocaleString;
+		delete NULL.toString;
+		delete NULL.valueOf;
+		var Null = function () {};
+		Null.prototype = NULL;
+		var constructor = function () {};
+		function __PURE__ (o, properties) {
+			if ( properties!==undefined$1 ) { throw TypeError('CAN NOT defineProperties in ES 3 Object.create polyfill'); }
+			if ( o===null ) { return new Null; }
+			if ( typeof o!=='object' && typeof o!=='function' ) { throw TypeError('Object prototype may only be an Object or null: '+o); }
+			constructor.prototype = o;
+			var created = new constructor;
+			constructor.prototype = NULL;
+			return created;
+		}
+		return function create (o, properties) {
+			return /*#__PURE__*/ __PURE__(o, properties);
+		};
+	}()
+	/*¡ j-globals: Object.create (polyfill) */
 );
+
+var assign = Object.assign;
+
+var toStringTag = typeof Symbol!=='undefined' ? Symbol.toStringTag : undefined;
+
+var defineProperty = Object.defineProperty;
+
+var freeze = Object.freeze;
+
+var seal = Object.seal;
+
+var Default = (
+	/*! j-globals: default (internal) */
+	function Default (exports, addOnOrigin) {
+		return /*#__PURE__*/ function Module (exports, addOnOrigin) {
+			if ( !addOnOrigin ) { addOnOrigin = exports; exports = create(null); }
+			if ( assign ) { assign(exports, addOnOrigin); }
+			else {
+				for ( var key in addOnOrigin ) { if ( hasOwnProperty.call(addOnOrigin, key) ) { exports[key] = addOnOrigin[key]; } }
+				if ( !{ 'toString': null }.propertyIsEnumerable('toString') ) {
+					var keys = [ 'constructor', 'propertyIsEnumerable', 'isPrototypeOf', 'hasOwnProperty', 'valueOf', 'toLocaleString', 'toString' ];
+					while ( key = keys.pop() ) { if ( hasOwnProperty.call(addOnOrigin, key) ) { exports[key] = addOnOrigin[key]; } }
+				}
+			}
+			exports['default'] = exports;
+			if ( seal ) {
+				typeof exports==='function' && exports.prototype && seal(exports.prototype);
+				if ( toStringTag ) {
+					var descriptor = create(null);
+					descriptor.value = 'Module';
+					defineProperty(exports, toStringTag, descriptor);
+				}
+				freeze(exports);
+			}
+			return exports;
+		}(exports, addOnOrigin);
+	}
+	/*¡ j-globals: default (internal) */
+);
+
+var _export = Default({
+	
+	version: version,
+	
+	isReservedWord: isReservedWord,
+	
+	isIdentifierName: isIdentifierName,
+	isIdentifier: isIdentifier,
+	isArrayIndex: isArrayIndex,
+	isIntegerIndex: isIntegerIndex,
+	isPropertyName: isPropertyName,
+	PropertyName: PropertyName,
+	PropertyAccessor: PropertyAccessor,
+	PropertyAccessors: PropertyAccessors,
+	
+	StringLiteral: StringLiteral,
+	NumericLiteral: NumericLiteral,
+	BigIntLiteral: BigIntLiteral,
+	RegularExpressionLiteral: RegularExpressionLiteral,
+	
+	ObjectLiteral: ObjectLiteral,
+	ArrayLiteral: ArrayLiteral,
+	
+	exportify: exportify
+	
+});
 
 module.exports = _export;
 

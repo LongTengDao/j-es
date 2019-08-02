@@ -19,12 +19,8 @@ module.exports = require('@ltd/j-dev')(__dirname+'/..')(async ({ build, 龙腾�
 		},
 		ES: 3,
 		ESM: true,
-		NPM: {
-			description: `${en}／${zhs}`,
-		},
-		UMD: {
-			main_global: 'ES',
-		},
+		NPM: { description: `${en}／${zhs}` },
+		UMD: { main_global: 'ES' },
 		LICENSE_: true,
 	});
 	
