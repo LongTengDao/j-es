@@ -1,4 +1,4 @@
-export const version :'0.8.0';
+export const version :'0.8.1';
 
 export function isReservedWord (name :string, ES? :number) :boolean;
 

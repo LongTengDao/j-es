@@ -1,3 +1,5 @@
+import RegExp from '.RegExp';
+
 import { Cf } from 'lib:unicode';
 
 export function NullLiteral () :'null' {
@@ -44,13 +46,43 @@ export function StringLiteral (string :string) :string {
 		+'\'';
 }
 
-var U_FLAG = /uy?$/;
-
+var EOL = /\\[^\s\S]|[\n\r\/\u2028\u2029]/g;
+function EOL_replacer (part :string) {
+	switch ( part ) {
+		case '\n':
+		case '\\\n':
+			return '\\n';
+		case '\r':
+		case '\\\r':
+			return '\\r';
+		case '/':
+			return '\\/';
+		case '\u2028':
+		case '\\\u2028':
+			return '\\u2028';
+		case '\u2029':
+		case '\\\u2029':
+			return '\\u2029';
+	}
+	return part;
+}
+var AS_ES5 = ''+RegExp('')==='//' || ''+RegExp('/')==='///' || ''+RegExp('\n')==='/\n/'
+	? function AS_ES5 (literal :string) {
+		var index :number = literal.length;
+		while ( literal.charAt(--index)!=='/' ) { }
+		var source :string = literal.slice(1, index);
+		source = source ? source.replace(EOL, EOL_replacer) : '(?:)';
+		return '/'+source+literal.slice(index);
+	}
+	: function (literal :string) { return literal; };
+var MAYBE_ES3 = /\/[gim]*$/;
+var SLASH_NUL = /(?!^)\/(?![a-z]*$)|\x00|\\[\s\S]/g;
+function SLASH_NUL_replacer (part :string) { return part==='\x00' ? '\\x00' : part==='/' ? '\\/' : part; }
 export function RegularExpressionLiteral (regExp :RegExp) :string {
-	var literal :string = ''+regExp;
-	return U_FLAG.test(literal)
-		? literal
-		: literal.replace(Cf, dynamicallyEscape as Replacer);
+	var literal :string = AS_ES5(''+regExp);
+	return MAYBE_ES3.test(literal)
+		? literal.replace(Cf, dynamicallyEscape as Replacer).replace(SLASH_NUL, SLASH_NUL_replacer)
+		: literal;
 }
 
 export function BigIntLiteral (bigInt :bigint) :string {
