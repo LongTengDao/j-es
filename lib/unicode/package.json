@@ -1,0 +1,11 @@
+{
+	"devDependencies": {
+		"regenerate": "1.4.0",
+		"unicode-2.1.2": "0.7.5",
+		"unicode-2.1.5": "0.7.5",
+		"unicode-2.1.8": "0.7.5",
+		"unicode-3.0.0": "0.7.5",
+		"unicode-3.0.1": "0.7.5",
+		"unicode-12.1.0": "0.8.0"
+	}
+}

@@ -1,6 +1,9 @@
 
 declare module '.Object.assign' { export default Object.assign; }
-declare module '.Object.create?=' { export default Object.create; }
+declare module '.Object.create?=' { export default create;
+	function create (proto :null) :object;
+	function create<T extends object> (proto :T) :object & { [K in keyof P] :P[K] };
+}
 declare module '.Object.defineProperty' { export default Object.defineProperty; }
 declare module '.Object.freeze' { export default Object.freeze; }
 declare module '.Object.prototype.hasOwnProperty' { export default Object.prototype.hasOwnProperty; }
