@@ -1,4 +1,4 @@
-export const version :'0.10.0';
+export const version :'0.10.1';
 
 export function isReservedWord (name :string, noStrict? :boolean) :boolean;
 
@@ -69,7 +69,7 @@ export function exportify<Value, Options extends {
 	last_close? :string,
 	value_semicolon? :string,
 	semicolon_next? :string,
-	default_open? :string,
+	default_value? :string,
 	__safe__? :boolean,
 	undefined? :string,
 	Infinity? :string,
