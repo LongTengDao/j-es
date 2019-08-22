@@ -1,17 +1,25 @@
 import RegExp from '.RegExp';
+import Infinity from '.Infinity';
+import Object from '.Object';
+import throwError from '.throw.Error';
 
 import { Cf } from 'lib:unicode';
+
+export var _Infinity = -Infinity;
 
 export function NullLiteral () :'null' {
 	return 'null';
 }
 
-export function BooleanLiteral (boolean :boolean) :'true' | 'false' {
-	return boolean ? 'true' : 'false';
+export function BooleanLiteral (value :boolean) :'true' | 'false' {
+	return value ? 'true' : 'false';
 }
 
-export function NumericLiteral (number :number) :string {
-	return ( number===0 && 1/number<0 ? '-' : '' )+number;
+export var is :(value :number, positive_zero :-0) => boolean = Object.is || function is (value :number) { return value===0 && 1/value<0; };
+export function NumericLiteral (value :number) :string {
+	return value===Infinity || value===_Infinity || value!==value
+		? /*#__PURE__*/ throwError('')
+		: ( is(value, -0) ? '-' : '' )+value;
 }
 
 var CANT_IN_SINGLE_QUOTE = /[\n\r'\\\u2028\u2029]/g;
@@ -38,9 +46,9 @@ function dynamicallyEscape (char_in_cf :string) :string {
 
 type Replacer = (...args :any[]) => string;
 
-export function StringLiteral (string :string) :string {
+export function StringLiteral (value :string) :string {
 	return '\''
-		+string
+		+value
 		.replace(CANT_IN_SINGLE_QUOTE, staticallyEscape as Replacer)
 		.replace(Cf, dynamicallyEscape as Replacer)
 		+'\'';
@@ -78,13 +86,13 @@ var AS_ES5 = ''+RegExp('')==='//' || ''+RegExp('/')==='///' || ''+RegExp('\n')==
 var MAYBE_ES3 = /\/[gim]*$/;
 var SLASH_NUL = /(?!^)\/(?![a-z]*$)|\x00|\\[\s\S]/g;
 function SLASH_NUL_replacer (part :string) { return part==='\x00' ? '\\x00' : part==='/' ? '\\/' : part; }
-export function RegularExpressionLiteral (regExp :RegExp) :string {
-	var literal :string = AS_ES5(''+regExp);
+export function RegularExpressionLiteral (value :RegExp) :string {
+	var literal :string = AS_ES5(''+value);
 	return MAYBE_ES3.test(literal)
 		? literal.replace(Cf, dynamicallyEscape as Replacer).replace(SLASH_NUL, SLASH_NUL_replacer)
 		: literal;
 }
 
-export function BigIntLiteral (bigInt :bigint) :string {
-	return bigInt+'n';
+export function BigIntLiteral (value :bigint) :string {
+	return value+'n';
 }

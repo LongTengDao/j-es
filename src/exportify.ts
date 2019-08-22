@@ -1,84 +1,59 @@
 import hasOwnProperty from '.Object.prototype.hasOwnProperty';
 
 import { isIdentifier, PropertyName } from './Name';
+import Primitive from './Primitive';
 
-export default function exportify<Value extends any> (
-	object :{ [key :string] :Value },
-	IdentifierValueLiteral :(value :Value) => string,
-	PropertyValueLiteral :(value :Value) => string,
-	options? :{
+export default function exportify (
+	object :{ [key :string] :any },
+	options :{
 		ES? :number,
-		let? :string,
+		let? :'var' | 'const' | 'let',
 		identifier_equal? :string,
 		equal_value? :string,
 		open_close? :string,
 		open_first? :string,
+		key_colon? :string,
 		colon_value? :string,
+		value_comma? :string,
 		comma_next? :string,
 		last_close? :string,
 		semicolon_next? :string,
 		default_open? :string,
-		defineProperty? :string,
+		__safe__? :boolean,
 	}
 ) :string {
-	if ( options ) {
-		var ES :number = options.ES || 0;
-		var gteES6 :boolean = ES>=6;
-		var LET :string = options.let || ( gteES6 ? 'const' : 'var' );
-		var identifier_equal :string = options.identifier_equal || '';
-		var equal_value :string = options.equal_value || '';
-		var open_close :string = options.open_close || '';
-		var open_first :string = options.open_first || '';
-		var colon_value :string = options.colon_value || '';
-		var comma_next :string = options.comma_next || '';
-		var last_close :string = options.last_close || '';
-		var semicolon_next :string = options.semicolon_next || '';
-		var default_open :string = options.default_open || '';
-		var defineProperty :string = options.defineProperty || 'Object.defineProperty';
-	}
-	else {
-		ES = 0;
-		gteES6 = false;
-		LET = 'var';
-		identifier_equal = '';
-		equal_value = '';
-		open_close = '';
-		open_first = '';
-		colon_value = '';
-		comma_next = '';
-		last_close = '';
-		semicolon_next = '';
-		default_open = '';
-		defineProperty = 'Object.defineProperty';
-	}
+	var ES :number = options.ES || 0;
+	var gteES6 :boolean = ES>=6;
+	var export_$_ = 'export '+( options.let || ( gteES6 ? 'const' : 'var' ) )+' ';
+	var _equal_ :string = ( options.identifier_equal || '' )+'='+( options.equal_value || '' );
+	var _colon_ :string = ( options.key_colon || '' )+':'+( options.colon_value || '' );
+	var semicolon_ :string = ';'+( options.semicolon_next || '' );
 	var named :string = '';
 	var pairs :string[] = [];
 	var open :string = '{';
 	var close :string = '}';
 	for ( var key in object ) {
 		if ( hasOwnProperty.call(object, key) ) {
-			if ( isIdentifier(key, ES) ) {
-				named += 'export '+LET+' '+key+identifier_equal+'='+equal_value+IdentifierValueLiteral(object[key])+';'+semicolon_next;
-				if ( gteES6 ) { pairs.push(key); }
-				else if ( key==='__proto__' ) {
-					if ( ES>=5 ) {
-						close = '}.__proto__';
-						pairs.push('get __proto__(){return/*#__PURE__*/'+defineProperty+'(this,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:__proto__})}');
-					}
-					else {
-						open = '/*#__PURE__*/function(o){o.__proto__?'+defineProperty+'(o,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:__proto__}):(o.__proto__=__proto__)return o}({';
+			var value = Primitive(object[key], key, object, options as {});
+			if ( value ) {
+				if ( isIdentifier(key, ES) ) {
+					named += export_$_+key+_equal_+value+semicolon_;
+					if ( gteES6 ) { pairs.push(key); }
+					else if ( key==='__proto__' && !options.__safe__ ) {
+						open = '/*#__PURE__*/function(o){o.__proto__=__proto__;return o}({';
 						close = '})';
-						pairs.push('__proto__:'+colon_value+'0');
+						pairs.push('__proto__'+_colon_+'null');
 					}
+					else { pairs.push(key+_colon_+key); }
 				}
-				else { pairs.push(key+':'+colon_value+key); }
+				else { pairs.push(PropertyName(key, ES)+_colon_+value); }
 			}
-			else { pairs.push(PropertyName(key, ES)+':'+colon_value+PropertyValueLiteral(object[key])); }
 		}
 	}
 	return named+
-		'export default'+default_open+open+( pairs.length
-				? open_first+pairs.join(','+comma_next)+last_close
-				: open_close
+		'export default'+( options.default_open || '' )+open+(
+			pairs.length
+				? ( options.open_first || '' )+pairs.join(( options.value_comma || '' )+','+( options.comma_next || '' ))+( options.last_close || '' )
+				: ( options.open_close || '' )
 		)+close+';';
 };

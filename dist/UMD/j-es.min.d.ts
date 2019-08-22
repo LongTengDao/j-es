@@ -2,11 +2,11 @@ export as namespace ES;
 export = EXPORTS;
 declare const EXPORTS :{
 	
-	version :'0.8.2'
+	version :'0.9.0';
 	
-	isReservedWord (name :string, ES? :number) :boolean;
+	isReservedWord (name :string, noStrict? :boolean) :boolean;
 	
-	isIdentifierName (name :string, ES? :number) :boolean;
+	isIdentifierName (name :string, ES? :number, noStrict? :boolean) :boolean;
 	isIdentifier (id :string, ES? :number) :boolean;
 	isArrayIndex (key :string) :boolean;
 	isIntegerIndex (key :string) :boolean;
@@ -15,55 +15,91 @@ declare const EXPORTS :{
 	PropertyAccessor (key :string, ES? :number) :string;
 	PropertyAccessors (keys :string[], ES? :number) :string;
 	
-	StringLiteral (string :string) :string
-	NumericLiteral (number :number) :string
-	BigIntLiteral (bigInt :bigint) :string
-	RegularExpressionLiteral (regExp :RegExp) :string
+	StringLiteral (string :string) :string;
+	NumericLiteral (number :number) :string;
+	BigIntLiteral (bigInt :bigint) :string;
+	RegularExpressionLiteral (regExp :RegExp) :string;
 	
-	ObjectLiteral<Value extends any> (
-		object :{ [key :string] :Value },
-		ValueLiteral :(value :Value) => string,
-		options? :{
-			ES? :number,
-			open_close? :string,
-			open_first? :string,
-			colon_value? :string,
-			comma_next? :string,
-			last_close? :string,
-			defineProperty? :string,
-		}
-	) :string
-	ArrayLiteral<Item extends any> (
-		array :Item[],
-		ItemLiteral :(item :Item) => string,
-		options? :{
-			open_close? :string,
-			open_first? :string,
-			comma_next? :string,
-			last_close? :string,
-		}
-	) :string
+	ObjectLiteral<Object extends object, Options extends {
+		ES? :number,
+		open_close? :string,
+		open_first? :string,
+		key_colon? :string,
+		colon_value? :string,
+		value_comma? :string,
+		comma_next? :string,
+		last_close? :string,
+		__proto__? :boolean,
+		undefined? :string,
+		Infinity? :string,
+		NaN? :string,
+	} & {
+		[methodName in keyof TypeMethods]? :(
+			this :Options,
+			value :TypeMethods[methodName] & Object[keyof Object],
+			key :keyof Object,
+			object :Object,
+		) => string
+	}> (object :Object, options :Options) :string;
+	ArrayLiteral<Array extends Readonly<any[]>, Options extends {
+		open_close? :string,
+		open_first? :string,
+		item_comma? :string,
+		comma_next? :string,
+		last_close? :string,
+		undefined? :string,
+		Infinity? :string,
+		NaN? :string,
+	} & {
+		[methodName in keyof TypeMethods]? :(
+			this :Options,
+			value :TypeMethods[methodName] & Array[number],
+			index :number,
+			array :Array,
+		) => string
+	}> (array :Array, options :Options) :string;
 	
-	exportify<Value extends any> (
-		object :{ [key :string] :Value },
-		IdentifierValueLiteral :(value :Value) => string,
-		PropertyValueLiteral :(value :Value) => string,
-		options? :{
-			ES? :number,
-			let? :string,
-			identifier_equal? :string,
-			equal_value? :string,
-			open_close? :string,
-			open_first? :string,
-			colon_value? :string,
-			comma_next? :string,
-			last_close? :string,
-			semicolon_next? :string,
-			default_open? :string,
-			defineProperty? :string,
-		}
-	) :string
+	exportify<Object extends object, Options extends {
+		ES? :number,
+		let? :'var' | 'const' | 'let',
+		identifier_equal? :string,
+		key_equal? :string,
+		equal_value? :string,
+		open_close? :string,
+		open_first? :string,
+		key_colon? :string,
+		colon_value? :string,
+		value_comma? :string,
+		comma_next? :string,
+		last_close? :string,
+		semicolon_next? :string,
+		default_open? :string,
+		__safe__? :boolean,
+		undefined? :string,
+		Infinity? :string,
+		NaN? :string,
+	} & {
+		[methodName in keyof TypeMethods]? :(
+			this :Options,
+			value :TypeMethods[methodName] & Object[keyof Object],
+			key :keyof Object,
+			object :Object,
+		) => string
+	}> (object :Object, options :Options) :string;
 	
-	default :typeof EXPORTS
+	default :typeof EXPORTS;
 	
+};
+
+type TypeMethods = {
+	bigint :bigint
+	symbol :symbol
+	Array :any[]
+	Map :Map<any, any>
+	Set :Set<any>
+	Date :Date
+	RegExp :RegExp
+	object :object
+	function :{ (this :any, ...args :any) :any, new (...args :any) :any } | { (this :any, ...args :any) :any } | { new (...args :any) :any }
+	unknown :unknown
 };

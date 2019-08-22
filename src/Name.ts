@@ -8,8 +8,8 @@ export function isIntegerIndex (key :string) :boolean {
 }
 
 import { RESERVED_WORD_ES3, RESERVED_WORD_ESM } from 'lib:reserved-word';
-export function isReservedWord (name :string, ES? :number) :boolean {
-	return ES!<0
+export function isReservedWord (name :string, noStrict? :boolean) :boolean {
+	return noStrict
 		? RESERVED_WORD_ES3.test(name)
 		: RESERVED_WORD_ESM.test(name);
 }
@@ -22,8 +22,8 @@ export function isIdentifierName (name :string, ES? :number) :boolean {
 	}
 	return IDENTIFIER_NAME_ES3.test(name);
 }
-export function isIdentifier (id :string, ES? :number) :boolean {
-	return isIdentifierName(id, ES!<0 ? -ES! : ES) && !isReservedWord(id, ES);
+export function isIdentifier (id :string, ES? :number, noStrict? :boolean) :boolean {
+	return isIdentifierName(id, ES) && !isReservedWord(id, noStrict);
 }
 export function isPropertyName (key :string, ES? :number) :boolean {
 	return isIdentifierName(key, ES)

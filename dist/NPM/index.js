@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-var version = '0.8.2';
+var version = '0.9.0';
 
 var RESERVED_WORD_ES3 = /^(?:break|c(?:a(?:se|tch)|lass|on(?:st|tinue))|d(?:o|e(?:bugger|fault|lete))|e(?:lse|num|x(?:port|tends))|f(?:alse|inally|or|unction)|i(?:f|mport|n(?:stanceof)?)|n(?:ew|ull)|return|s(?:uper|witch)|t(?:h(?:is|row)|r(?:y|ue)|ypeof)|v(?:ar|oid)|w(?:hile|ith))$/;
 
@@ -14,8 +14,35 @@ var IDENTIFIER_NAME_ES3 = /^[\$A-Z_a-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u01F5\
 
 var Cf = /[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804[\uDCBD\uDCCD]|\uD80D[\uDC30-\uDC38]|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/g;
 
-function NumericLiteral (number        )         {
-	return ( number===0 && 1/number<0 ? '-' : '' )+number;
+var Infinity = 1/0;
+
+var Error0 = (
+	/*! j-globals: Error (polyfill) */
+	/*# __PURE__*/ Error('0').message ? Error : /*#__PURE__*/ function () {
+		function Error0 (message) {
+			return Error(0, message);
+		}
+		Error0.prototype = Error.prototype;
+		return Error0;
+	}()
+	/*¡ j-globals: Error (polyfill) */
+);
+
+var throwError = (
+	/*! j-globals: throw.Error (internal) */
+	function throwError (message) {
+		throw Error0(message);
+	}
+	/*¡ j-globals: throw.Error (internal) */
+);
+
+var _Infinity = -Infinity;
+
+var is                                                = Object.is || function is (value        ) { return value===0 && 1/value<0; };
+function NumericLiteral (value        )         {
+	return value===Infinity || value===_Infinity || value!==value
+		? /*#__PURE__*/ throwError('')
+		: ( is(value, -0) ? '-' : '' )+value;
 }
 
 var CANT_IN_SINGLE_QUOTE = /[\n\r'\\\u2028\u2029]/g;
@@ -42,9 +69,9 @@ function dynamicallyEscape (char_in_cf        )         {
 
                                            
 
-function StringLiteral (string        )         {
+function StringLiteral (value        )         {
 	return '\''
-		+string
+		+value
 		.replace(CANT_IN_SINGLE_QUOTE, staticallyEscape            )
 		.replace(Cf, dynamicallyEscape            )
 		+'\'';
@@ -82,15 +109,15 @@ var AS_ES5 = ''+RegExp('')==='//' || ''+RegExp('/')==='///' || ''+RegExp('\n')==
 var MAYBE_ES3 = /\/[gim]*$/;
 var SLASH_NUL = /(?!^)\/(?![a-z]*$)|\x00|\\[\s\S]/g;
 function SLASH_NUL_replacer (part        ) { return part==='\x00' ? '\\x00' : part==='/' ? '\\/' : part; }
-function RegularExpressionLiteral (regExp        )         {
-	var literal         = AS_ES5(''+regExp);
+function RegularExpressionLiteral (value        )         {
+	var literal         = AS_ES5(''+value);
 	return MAYBE_ES3.test(literal)
 		? literal.replace(Cf, dynamicallyEscape            ).replace(SLASH_NUL, SLASH_NUL_replacer)
 		: literal;
 }
 
-function BigIntLiteral (bigInt        )         {
-	return bigInt+'n';
+function BigIntLiteral (value        )         {
+	return value+'n';
 }
 
 var LIKE_SAFE_INTEGER = /^(?:0|[1-9]\d{0,15})$/;
@@ -101,8 +128,8 @@ function isArrayIndex (key        )          {
 function isIntegerIndex (key        )          {
 	return LIKE_SAFE_INTEGER.test(key) && key       <=9007199254740991;
 }
-function isReservedWord (name        , ES         )          {
-	return ES <0
+function isReservedWord (name        , noStrict          )          {
+	return noStrict
 		? RESERVED_WORD_ES3.test(name)
 		: RESERVED_WORD_ESM.test(name);
 }
@@ -113,8 +140,8 @@ function isIdentifierName (name        , ES         )          {
 	}
 	return IDENTIFIER_NAME_ES3.test(name);
 }
-function isIdentifier (id        , ES         )          {
-	return isIdentifierName(id, ES <0 ? -ES  : ES) && !isReservedWord(id, ES);
+function isIdentifier (id        , ES         , noStrict          )          {
+	return isIdentifierName(id, ES) && !isReservedWord(id, noStrict);
 }
 function isPropertyName (key        , ES         )          {
 	return isIdentifierName(key, ES)
@@ -139,176 +166,280 @@ function PropertyAccessors (keys          , ES         )         {
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-function ObjectLiteral                    (
-	object                          ,
-	ValueLiteral                          ,
-	options    
-		            
-		                                          
-		                                           
-		                                            
-		                                           
-		                                           
-		                        
-	 
+var undefined$1 = void 0;
+
+var toString = Object.prototype.toString;
+
+var isArray = (
+	/*! j-globals: Array.isArray (polyfill) */
+	Array.isArray || function isArray (value) {
+		return typeof value==='object' && /*#__PURE__*/ toString.call(value)==='[object Array]';
+	}
+	/*¡ j-globals: Array.isArray (polyfill) */
+);
+
+var valueOf = Date.prototype.valueOf;
+
+var throwOverflow = /*#__PURE__*/ Function('return function(){}')();
+
+var isDate = (
+	/*! j-globals: class.isDate (internal) */
+	function () {
+		function __PURE__ (value) {
+			throwOverflow();
+			try { valueOf.call(value); }
+			catch (error) { return false; }
+			return true;
+		}
+		return function isDate (value) {
+			return /*#__PURE__*/ __PURE__(value);
+		};
+	}()
+	/*¡ j-globals: class.isDate (internal) */
+);
+
+var test = RegExp.prototype.test;
+
+var isRegExp = (
+	/*! j-globals: class.isRegExp (internal) */
+	function () {
+		function __PURE__ (value) {
+			throwOverflow();
+			try { test.call(value, ''); }
+			catch (error) { return false; }
+			return true;
+		}
+		return function isRegExp (value) {
+			return /*#__PURE__*/ __PURE__(value);
+		};
+	}()
+	/*¡ j-globals: class.isRegExp (internal) */
+);
+
+var has = typeof Map!=='undefined' && Map.prototype!==undefined ? Map.prototype.has : undefined;
+
+var isMap = (
+	/*! j-globals: class.isMap (internal) */
+	has
+		? function () {
+			function __PURE__ (value) {
+				throwOverflow();
+				try { has.call(value); }
+				catch (error) { return false; }
+				return true;
+			}
+			return function isMap (value) {
+				return /*#__PURE__*/ __PURE__(value);
+			};
+		}()
+		: function isMap () { return false; }
+	/*¡ j-globals: class.isMap (internal) */
+);
+
+var has$1 = typeof Set!=='undefined' && Set.prototype!==undefined ? Set.prototype.has : undefined;
+
+var isSet = (
+	/*! j-globals: class.isSet (internal) */
+	has$1
+		? function () {
+			function __PURE__ (value) {
+				throwOverflow();
+				try { has$1.call(value); }
+				catch (error) { return false; }
+				return true;
+			}
+			return function isSet (value) {
+				return /*#__PURE__*/ __PURE__(value);
+			};
+		}()
+		: function isSet () { return false; }
+	/*¡ j-globals: class.isSet (internal) */
+);
+
+function Primitive                                       
+	                 
+		                   
+		                  
+		             
+	     
+		                                     
+			              
+			                                                      
+			                  
+			               
+		           
+	   (
+	value                      ,
+	key              ,
+	object        ,
+	options         
 )         {
-	if ( options ) {
-		var ES         = options.ES || 0;
-		var gteES5          = options.ES >=5;
-		var open_close         = options.open_close || '';
-		var open_first         = options.open_first || '';
-		var colon_value         = options.colon_value || '';
-		var comma_next         = options.comma_next || '';
-		var last_close         = options.last_close || '';
-		var defineProperty         = options.defineProperty || 'Object.defineProperty';
+	switch ( value ) {
+		case null:
+			return 'null';
+		case true:
+			return 'true';
+		case false:
+			return 'false';
+		case undefined$1:
+			return options.undefined || '';
+		case Infinity:
+			return options.Infinity || '';
+		case _Infinity:
+			return options.Infinity ? '-'+options.Infinity : '';
 	}
-	else {
-		ES = 0;
-		gteES5 = false;
-		open_close = '';
-		open_first = '';
-		colon_value = '';
-		comma_next = '';
-		last_close = '';
-		defineProperty = 'Object.defineProperty';
+	if ( value!==value ) { return options.NaN || ''; }
+	switch ( typeof value ) {
+		case 'number':
+			return ( is(value, -0) ? '-' : '' )+value;
+		case 'string':
+			return StringLiteral(value);
+		case 'bigint':
+			return options.bigint ? options.bigint(value, key, object) : '';
+		case 'object':
+			return (
+				options.Array && isArray(value) ? options.Array(value, key, object) :
+					options.Map && isMap(value) ? options.Map(value, key, object) :
+						options.Set && isSet(value) ? options.Set(value, key, object) :
+							options.Date && isDate(value) ? options.Date(value, key, object) :
+								options.RegExp && isRegExp(value) ? options.RegExp(value, key, object) :
+									options.object ? options.object(value, key, object) : ''
+			);
+		case 'function':
+			return options['function'] ? options['function'](value, key, object) : '';
+		case 'symbol':
+			return options.symbol ? options.symbol(value, key, object) : '';
 	}
+	return options.unknown ? options.unknown(value, key, object) : '';
+}
+
+function ObjectLiteral (object                        , options   
+	            
+	                                          
+	                                           
+	                  
+	                                            
+	                     
+	                                           
+	                                           
+	                   
+ )         {
 	var pairs           = [];
 	var open         = '{';
 	var close         = '}';
+	var _colon_         = ( options.key_colon || '' )+':'+( options.colon_value || '' );
+	var ES         = options.ES || 0;
 	for ( var key in object ) {
 		if ( hasOwnProperty.call(object, key) ) {
-			var value         = ValueLiteral(object[key]);
-			if ( key==='__proto__' ) {
-				if ( gteES5 && options .ES >=6 ) { key = '[\'__proto__\']'; }
-				else if ( gteES5 ) {
-					close = '}.__proto__';
-					pairs.push('get __proto__(){return/*#__PURE__*/'+defineProperty+'(this,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:'+colon_value+value+'})}');
-					continue;
+			var value = Primitive(object[key                ], key, object, options      );
+			if ( value ) {
+				if ( key==='__proto__' && !options.__safe__ ) {
+					if ( ES>=6 ) { key = '[\'__proto__\']'       ; }
+					else {
+						open = '/*#__PURE__*/function(p,o){o.__proto__=_.p;return o}({'+( options.open_first || '' )+'p'+_colon_+value+( options.last_close || '' )+'},{';
+						close = '})';
+						value = 'null';
+					}
 				}
-				else {
-					open = '/*#__PURE__*/function(o,_){o.__proto__?'+defineProperty+'(o,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:_}):(o.__proto__=_._)return o}({';
-					close = '},{'+open_first+'_:'+colon_value+value+last_close+'})';
-					value = '0';
-				}
+				else { key = PropertyName(key, ES)       ; }
+				pairs.push(key+_colon_+value);
 			}
-			else { key = PropertyName(key, ES); }
-			pairs.push(key+':'+colon_value+value);
 		}
 	}
-	return open+( pairs.length
-			? open_first+pairs.join(','+comma_next)+last_close
-			: open_close
+	return open+(
+		pairs.length
+			? ( options.open_first || '' )+pairs.join(( options.value_comma || '' )+','+( options.comma_next || '' ))+( options.last_close || '' )
+			: ( options.open_close || '' )
 	)+close;
 }
 
-function ArrayLiteral                   (
-	array        ,
-	ItemLiteral                        ,
-	options    
+function ArrayLiteral (
+	array                 ,
+	options   
+		            
 		                                   
 		                                    
+		                    
 		                                    
 		                                    
 	 
 )         {
-	if ( options ) {
-		var open_close = options.open_close;
-		var open_first = options.open_first;
-		var comma_next = options.comma_next;
-		var last_close = options.last_close;
+	var items          ;
+	var length = array.length;
+	if ( length===1 ) {
+		var item = Primitive(array[0], 0, array, options      );
+		if ( item || options.ES >=5 ) { items = [ item ]; }
+		else {
+			return '/*#__PURE__*/function(){var a=['+( options.open_first || '' )+( options.last_close || '' )+'];a.length=1;return a}()';
+		}
 	}
-	var items           = [];
-	for ( var length = array.length, index = 0; index<length; ) {
-		items.push(ItemLiteral(array[index]));
+	else {
+		items = [];
+		for ( var index = 0; index<length; ++index ) {
+			items.push(Primitive(array[index], index, array, options      ));
+		}
 	}
-	return '['+( items.length
-			? ( open_first || '' )+items.join(','+( comma_next || '' ))+( last_close || '' )
-			: open_close || ''
+	return '['+(
+		items.length
+			? ( options.open_first || '' )+items.join(( options.item_comma || '' )+','+( options.comma_next || '' ))+( options.last_close || '' )
+			: options.open_close || ''
 	)+']';
 }
 
-function exportify                    (
-	object                          ,
-	IdentifierValueLiteral                          ,
-	PropertyValueLiteral                          ,
-	options    
+function exportify (
+	object                        ,
+	options   
 		            
-		             
+		                              
 		                          
 		                     
 		                    
 		                    
+		                   
+		                     
 		                     
 		                    
 		                    
 		                        
 		                      
-		                        
+		                   
 	 
 )         {
-	if ( options ) {
-		var ES         = options.ES || 0;
-		var gteES6          = ES>=6;
-		var LET         = options.let || ( gteES6 ? 'const' : 'var' );
-		var identifier_equal         = options.identifier_equal || '';
-		var equal_value         = options.equal_value || '';
-		var open_close         = options.open_close || '';
-		var open_first         = options.open_first || '';
-		var colon_value         = options.colon_value || '';
-		var comma_next         = options.comma_next || '';
-		var last_close         = options.last_close || '';
-		var semicolon_next         = options.semicolon_next || '';
-		var default_open         = options.default_open || '';
-		var defineProperty         = options.defineProperty || 'Object.defineProperty';
-	}
-	else {
-		ES = 0;
-		gteES6 = false;
-		LET = 'var';
-		identifier_equal = '';
-		equal_value = '';
-		open_close = '';
-		open_first = '';
-		colon_value = '';
-		comma_next = '';
-		last_close = '';
-		semicolon_next = '';
-		default_open = '';
-		defineProperty = 'Object.defineProperty';
-	}
+	var ES         = options.ES || 0;
+	var gteES6          = ES>=6;
+	var export_$_ = 'export '+( options.let || ( gteES6 ? 'const' : 'var' ) )+' ';
+	var _equal_         = ( options.identifier_equal || '' )+'='+( options.equal_value || '' );
+	var _colon_         = ( options.key_colon || '' )+':'+( options.colon_value || '' );
+	var semicolon_         = ';'+( options.semicolon_next || '' );
 	var named         = '';
 	var pairs           = [];
 	var open         = '{';
 	var close         = '}';
 	for ( var key in object ) {
 		if ( hasOwnProperty.call(object, key) ) {
-			if ( isIdentifier(key, ES) ) {
-				named += 'export '+LET+' '+key+identifier_equal+'='+equal_value+IdentifierValueLiteral(object[key])+';'+semicolon_next;
-				if ( gteES6 ) { pairs.push(key); }
-				else if ( key==='__proto__' ) {
-					if ( ES>=5 ) {
-						close = '}.__proto__';
-						pairs.push('get __proto__(){return/*#__PURE__*/'+defineProperty+'(this,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:__proto__})}');
-					}
-					else {
-						open = '/*#__PURE__*/function(o){o.__proto__?'+defineProperty+'(o,\'__proto__\',{configurable:1,enumerable:1,writable:1,value:__proto__}):(o.__proto__=__proto__)return o}({';
+			var value = Primitive(object[key], key, object, options      );
+			if ( value ) {
+				if ( isIdentifier(key, ES) ) {
+					named += export_$_+key+_equal_+value+semicolon_;
+					if ( gteES6 ) { pairs.push(key); }
+					else if ( key==='__proto__' && !options.__safe__ ) {
+						open = '/*#__PURE__*/function(o){o.__proto__=__proto__;return o}({';
 						close = '})';
-						pairs.push('__proto__:'+colon_value+'0');
+						pairs.push('__proto__'+_colon_+'null');
 					}
+					else { pairs.push(key+_colon_+key); }
 				}
-				else { pairs.push(key+':'+colon_value+key); }
+				else { pairs.push(PropertyName(key, ES)+_colon_+value); }
 			}
-			else { pairs.push(PropertyName(key, ES)+':'+colon_value+PropertyValueLiteral(object[key])); }
 		}
 	}
 	return named+
-		'export default'+default_open+open+( pairs.length
-				? open_first+pairs.join(','+comma_next)+last_close
-				: open_close
+		'export default'+( options.default_open || '' )+open+(
+			pairs.length
+				? ( options.open_first || '' )+pairs.join(( options.value_comma || '' )+','+( options.comma_next || '' ))+( options.last_close || '' )
+				: ( options.open_close || '' )
 		)+close+';';
 }
-
-var undefined$1 = void 0;
 
 var create = Object.create || (
 	/*! j-globals: Object.create (polyfill) */
@@ -359,16 +490,12 @@ var create = Object.create || (
 	/*¡ j-globals: Object.create (polyfill) */
 );
 
-var assign = Object.assign;
-
 var toStringTag = typeof Symbol!=='undefined' ? Symbol.toStringTag : undefined;
 
+var assign = Object.assign;
 var defineProperty = Object.defineProperty;
-
 var freeze = Object.freeze;
-
 var seal = Object.seal;
-
 var Default = (
 	/*! j-globals: default (internal) */
 	function Default (exports, addOnOrigin) {
