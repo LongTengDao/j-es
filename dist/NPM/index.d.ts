@@ -1,7 +1,7 @@
 export = EXPORTS;
 declare const EXPORTS :{
 	
-	version :'0.10.1';
+	version :'0.10.2';
 	
 	isReservedWord (name :string, noStrict? :boolean) :boolean;
 	
@@ -73,7 +73,7 @@ declare const EXPORTS :{
 		last_close? :string,
 		value_semicolon? :string,
 		semicolon_next? :string,
-		default_open? :string,
+		default_value? :string,
 		__safe__? :boolean,
 		undefined? :string,
 		Infinity? :string,
