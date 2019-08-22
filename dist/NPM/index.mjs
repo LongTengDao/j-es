@@ -2,14 +2,14 @@
  * 模块名称：ES
  * 模块功能：ECMAScript 语法相关共享实用程序。从属于“简计划”。
    　　　　　ECMAScript syntax util. Belong to "Plan J".
- * 模块版本：0.9.0
+ * 模块版本：0.10.0
  * 许可条款：LGPL-3.0
  * 所属作者：龙腾道 <LongTengDao@LongTengDao.com> (www.LongTengDao.com)
  * 问题反馈：https://GitHub.com/LongTengDao/j-es/issues
  * 项目主页：https://GitHub.com/LongTengDao/j-es/
  */
 
-var version = '0.9.0';
+var version = '0.10.0';
 
 var RESERVED_WORD_ES3 = /^(?:break|c(?:a(?:se|tch)|lass|on(?:st|tinue))|d(?:o|e(?:bugger|fault|lete))|e(?:lse|num|x(?:port|tends))|f(?:alse|inally|or|unction)|i(?:f|mport|n(?:stanceof)?)|n(?:ew|ull)|return|s(?:uper|witch)|t(?:h(?:is|row)|r(?:y|ue)|ypeof)|v(?:ar|oid)|w(?:hile|ith))$/;
 
@@ -187,45 +187,9 @@ var isArray = (
 	/*¡ j-globals: Array.isArray (polyfill) */
 );
 
-var valueOf = Date.prototype.valueOf;
+var has = typeof Map!=='undefined' && Map.prototype!==undefined ? Map.prototype.has : undefined;
 
 var throwOverflow = /*#__PURE__*/ Function('return function(){}')();
-
-var isDate = (
-	/*! j-globals: class.isDate (internal) */
-	function () {
-		function __PURE__ (value) {
-			throwOverflow();
-			try { valueOf.call(value); }
-			catch (error) { return false; }
-			return true;
-		}
-		return function isDate (value) {
-			return /*#__PURE__*/ __PURE__(value);
-		};
-	}()
-	/*¡ j-globals: class.isDate (internal) */
-);
-
-var test = RegExp.prototype.test;
-
-var isRegExp = (
-	/*! j-globals: class.isRegExp (internal) */
-	function () {
-		function __PURE__ (value) {
-			throwOverflow();
-			try { test.call(value, ''); }
-			catch (error) { return false; }
-			return true;
-		}
-		return function isRegExp (value) {
-			return /*#__PURE__*/ __PURE__(value);
-		};
-	}()
-	/*¡ j-globals: class.isRegExp (internal) */
-);
-
-var has = typeof Map!=='undefined' && Map.prototype!==undefined ? Map.prototype.has : undefined;
 
 var isMap = (
 	/*! j-globals: class.isMap (internal) */
@@ -263,6 +227,42 @@ var isSet = (
 		}()
 		: function isSet () { return false; }
 	/*¡ j-globals: class.isSet (internal) */
+);
+
+var valueOf = Date.prototype.valueOf;
+
+var isDate = (
+	/*! j-globals: class.isDate (internal) */
+	function () {
+		function __PURE__ (value) {
+			throwOverflow();
+			try { valueOf.call(value); }
+			catch (error) { return false; }
+			return true;
+		}
+		return function isDate (value) {
+			return /*#__PURE__*/ __PURE__(value);
+		};
+	}()
+	/*¡ j-globals: class.isDate (internal) */
+);
+
+var test = RegExp.prototype.test;
+
+var isRegExp = (
+	/*! j-globals: class.isRegExp (internal) */
+	function () {
+		function __PURE__ (value) {
+			throwOverflow();
+			try { test.call(value, ''); }
+			catch (error) { return false; }
+			return true;
+		}
+		return function isRegExp (value) {
+			return /*#__PURE__*/ __PURE__(value);
+		};
+	}()
+	/*¡ j-globals: class.isRegExp (internal) */
 );
 
 function Primitive                                       
@@ -395,8 +395,10 @@ function ArrayLiteral (
 	)+']';
 }
 
+var SAFE = /^[`~!@#%^&*()\-=+[{\]}\\|;:'",<.>\/?\s]/;
+
 function exportify (
-	object                        ,
+	object     ,
 	options   
 		            
 		                              
@@ -409,17 +411,26 @@ function exportify (
 		                     
 		                    
 		                    
+		                         
 		                        
-		                      
+		                       
 		                   
 	 
 )         {
+	if ( typeof object!=='object' || object===null || isArray(object) || isMap(object) || isSet(object) || isDate(object) || isRegExp(object) ) {
+		var $default$ = Primitive(object, undefined$1       , undefined$1       , options      );
+		if ( $default$ ) {
+			$default$ = ( options.default_value || '' )+$default$;
+			return 'export default'+( SAFE.test($default$) ? '' : ' ' )+( options.value_semicolon || '' )+';';
+		}
+		return '';
+	}
 	var ES         = options.ES || 0;
 	var gteES6          = ES>=6;
 	var export_$_ = 'export '+( options.let || ( gteES6 ? 'const' : 'var' ) )+' ';
 	var _equal_         = ( options.identifier_equal || '' )+'='+( options.equal_value || '' );
 	var _colon_         = ( options.key_colon || '' )+':'+( options.colon_value || '' );
-	var semicolon_         = ';'+( options.semicolon_next || '' );
+	var semicolon_         = ( options.value_semicolon || '' )+';'+( options.semicolon_next || '' );
 	var named         = '';
 	var pairs           = [];
 	var open         = '{';
@@ -443,7 +454,7 @@ function exportify (
 		}
 	}
 	return named+
-		'export default'+( options.default_open || '' )+open+(
+		'export default'+( options.default_value || '' )+open+(
 			pairs.length
 				? ( options.open_first || '' )+pairs.join(( options.value_comma || '' )+','+( options.comma_next || '' ))+( options.last_close || '' )
 				: ( options.open_close || '' )

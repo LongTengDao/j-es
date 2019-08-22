@@ -1,10 +1,18 @@
 import hasOwnProperty from '.Object.prototype.hasOwnProperty';
+import undefined from '.undefined';
+import isArray from '.Array.isArray?=';
+import isMap from '.class.isMap';
+import isSet from '.class.isSet';
+import isDate from '.class.isDate';
+import isRegExp from '.class.isRegExp';
 
 import { isIdentifier, PropertyName } from './Name';
 import Primitive from './Primitive';
 
+var SAFE = /^[`~!@#%^&*()\-=+[{\]}\\|;:'",<.>\/?\s]/;
+
 export default function exportify (
-	object :{ [key :string] :any },
+	object :any,
 	options :{
 		ES? :number,
 		let? :'var' | 'const' | 'let',
@@ -17,17 +25,26 @@ export default function exportify (
 		value_comma? :string,
 		comma_next? :string,
 		last_close? :string,
+		value_semicolon? :string,
 		semicolon_next? :string,
-		default_open? :string,
+		default_value? :string,
 		__safe__? :boolean,
 	}
 ) :string {
+	if ( typeof object!=='object' || object===null || isArray(object) || isMap(object) || isSet(object) || isDate(object) || isRegExp(object) ) {
+		var $default$ = Primitive(object, undefined as any, undefined as any, options as {});
+		if ( $default$ ) {
+			$default$ = ( options.default_value || '' )+$default$;
+			return 'export default'+( SAFE.test($default$) ? '' : ' ' )+( options.value_semicolon || '' )+';';
+		}
+		return '';
+	}
 	var ES :number = options.ES || 0;
 	var gteES6 :boolean = ES>=6;
 	var export_$_ = 'export '+( options.let || ( gteES6 ? 'const' : 'var' ) )+' ';
 	var _equal_ :string = ( options.identifier_equal || '' )+'='+( options.equal_value || '' );
 	var _colon_ :string = ( options.key_colon || '' )+':'+( options.colon_value || '' );
-	var semicolon_ :string = ';'+( options.semicolon_next || '' );
+	var semicolon_ :string = ( options.value_semicolon || '' )+';'+( options.semicolon_next || '' );
 	var named :string = '';
 	var pairs :string[] = [];
 	var open :string = '{';
@@ -51,7 +68,7 @@ export default function exportify (
 		}
 	}
 	return named+
-		'export default'+( options.default_open || '' )+open+(
+		'export default'+( options.default_value || '' )+open+(
 			pairs.length
 				? ( options.open_first || '' )+pairs.join(( options.value_comma || '' )+','+( options.comma_next || '' ))+( options.last_close || '' )
 				: ( options.open_close || '' )

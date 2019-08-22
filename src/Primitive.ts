@@ -1,10 +1,10 @@
 import Infinity from '.Infinity';
 import undefined from '.undefined';
 import isArray from '.Array.isArray?=';
-import isDate from '.class.isDate';
-import isRegExp from '.class.isRegExp';
 import isMap from '.class.isMap';
 import isSet from '.class.isSet';
+import isDate from '.class.isDate';
+import isRegExp from '.class.isRegExp';
 
 import { StringLiteral, _Infinity, is } from './Literal';
 

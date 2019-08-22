@@ -55,7 +55,7 @@ export function ArrayLiteral<Array extends Readonly<any[]>, Options extends {
 	) => string
 }> (array :Array, options :Options) :string;
 
-export function exportify<Object extends object, Options extends {
+export function exportify<Value, Options extends {
 	ES? :number,
 	let? :'var' | 'const' | 'let',
 	identifier_equal? :string,
@@ -67,20 +67,17 @@ export function exportify<Object extends object, Options extends {
 	value_comma? :string,
 	comma_next? :string,
 	last_close? :string,
+	value_semicolon? :string,
 	semicolon_next? :string,
 	default_open? :string,
 	__safe__? :boolean,
 	undefined? :string,
 	Infinity? :string,
 	NaN? :string,
-} & {
-	[methodName in keyof TypeMethods]? :(
-		this :Options,
-		value :TypeMethods[methodName] & Object[keyof Object],
-		key :keyof Object,
-		object :Object,
-	) => string
-}> (object :Object, options :Options) :string;
+} & ( Value extends object
+	? { [methodName in keyof TypeMethods]? :(this :Options, value :TypeMethods[methodName] & Value[keyof Value], key :keyof Value, object :Value) => string }
+	: { [methodName in keyof TypeMethods]? :(this :Options, value :TypeMethods[methodName]) => string }
+	)> (object :Value, options :Options) :string;
 
 type TypeMethods = {
 	bigint :bigint
