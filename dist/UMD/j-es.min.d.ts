@@ -2,7 +2,7 @@ export as namespace ES;
 export = EXPORTS;
 declare const EXPORTS :{
 	
-	version :'0.10.2';
+	version :'0.10.3';
 	
 	isReservedWord (name :string, noStrict? :boolean) :boolean;
 	

@@ -18,7 +18,7 @@ export function BooleanLiteral (value :boolean) :'true' | 'false' {
 export var is :(value :number, positive_zero :-0) => boolean = Object.is || function is (value :number) { return value===0 && 1/value<0; };
 export function NumericLiteral (value :number) :string {
 	return value===Infinity || value===_Infinity || value!==value
-		? /*#__PURE__*/ throwError('')
+		? /*#__PURE__*/ throwError('NumericLiteral('+value+')')
 		: ( is(value, -0) ? '-' : '' )+value;
 }
 

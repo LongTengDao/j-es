@@ -2,14 +2,14 @@
  * 模块名称：ES
  * 模块功能：ECMAScript 语法相关共享实用程序。从属于“简计划”。
    　　　　　ECMAScript syntax util. Belong to "Plan J".
- * 模块版本：0.10.2
+ * 模块版本：0.10.3
  * 许可条款：LGPL-3.0
  * 所属作者：龙腾道 <LongTengDao@LongTengDao.com> (www.LongTengDao.com)
  * 问题反馈：https://GitHub.com/LongTengDao/j-es/issues
  * 项目主页：https://GitHub.com/LongTengDao/j-es/
  */
 
-var version = '0.10.2';
+var version = '0.10.3';
 
 var RESERVED_WORD_ES3 = /^(?:break|c(?:a(?:se|tch)|lass|on(?:st|tinue))|d(?:o|e(?:bugger|fault|lete))|e(?:lse|num|x(?:port|tends))|f(?:alse|inally|or|unction)|i(?:f|mport|n(?:stanceof)?)|n(?:ew|ull)|return|s(?:uper|witch)|t(?:h(?:is|row)|r(?:y|ue)|ypeof)|v(?:ar|oid)|w(?:hile|ith))$/;
 
@@ -50,7 +50,7 @@ var _Infinity = -Infinity;
 var is                                                = Object.is || function is (value        ) { return value===0 && 1/value<0; };
 function NumericLiteral (value        )         {
 	return value===Infinity || value===_Infinity || value!==value
-		? /*#__PURE__*/ throwError('')
+		? /*#__PURE__*/ throwError('NumericLiteral('+value+')')
 		: ( is(value, -0) ? '-' : '' )+value;
 }
 

@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-var version = '0.10.2';
+var version = '0.10.3';
 
 var RESERVED_WORD_ES3 = /^(?:break|c(?:a(?:se|tch)|lass|on(?:st|tinue))|d(?:o|e(?:bugger|fault|lete))|e(?:lse|num|x(?:port|tends))|f(?:alse|inally|or|unction)|i(?:f|mport|n(?:stanceof)?)|n(?:ew|ull)|return|s(?:uper|witch)|t(?:h(?:is|row)|r(?:y|ue)|ypeof)|v(?:ar|oid)|w(?:hile|ith))$/;
 
@@ -41,7 +41,7 @@ var _Infinity = -Infinity;
 var is                                                = Object.is || function is (value        ) { return value===0 && 1/value<0; };
 function NumericLiteral (value        )         {
 	return value===Infinity || value===_Infinity || value!==value
-		? /*#__PURE__*/ throwError('')
+		? /*#__PURE__*/ throwError('NumericLiteral('+value+')')
 		: ( is(value, -0) ? '-' : '' )+value;
 }
 
