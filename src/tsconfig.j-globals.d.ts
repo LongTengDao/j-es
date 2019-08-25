@@ -56,13 +56,13 @@ declare module '.class.isDate' { export default isDate;
 	function isDate (value :any) :value is Date;
 }
 declare module '.class.isMap' { export default isMap;
-	function isMap (value :any) :value is Map;
+	function isMap (value :any) :value is Map<any, any>;
 }
 declare module '.class.isRegExp' { export default isRegExp;
 	function isRegExp (value :any) :value is RegExp;
 }
 declare module '.class.isSet' { export default isSet;
-	function isSet (value :any) :value is Set;
+	function isSet (value :any) :value is Set<any>;
 }
 
 declare module '.default?=' { export default Default;
@@ -75,6 +75,10 @@ declare module '.default?=' { export default Default;
 }
 
 declare module '.native' { export default _; const _ :never; }
+
+declare module '.null.prototype' { export default NULL;
+	const NULL :object | null;
+}
 
 declare module '.throw.Error' { export default throwError;
 	function throwError (message? :string) :never;
